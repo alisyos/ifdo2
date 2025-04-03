@@ -17,8 +17,30 @@
         
         <div class="controls">
             <button id="refreshBtn">새로고침</button>
+            <button id="analyzeBtn" class="analyze-btn">GPT 분석하기</button>
             <div class="loading" id="loading">로딩 중...</div>
         </div>
+        
+        <!-- GPT 분석 결과 섹션 - 데이터 위쪽으로 이동 -->
+        <div id="gptResultSection" class="gpt-result-section" style="display: none;">
+            <h2>GPT 분석 결과</h2>
+            <div class="gpt-result-container">
+                <div id="gptResult" class="gpt-result"></div>
+            </div>
+        </div>
+        
+        <div class="table-options">
+            <div class="page-size-container">
+                <label for="pageSize">표시 개수:</label>
+                <select id="pageSize" class="page-size-select">
+                    <option value="10">10개</option>
+                    <option value="20">20개</option>
+                    <option value="50">50개</option>
+                    <option value="100">100개</option>
+                </select>
+            </div>
+        </div>
+        
         <div class="table-container">
             <table id="dataTable">
                 <thead>
@@ -32,31 +54,49 @@
             </table>
         </div>
         
-        <!-- GPT 분석 섹션 추가 -->
-        <div class="gpt-analysis-section">
-            <h2>GPT 데이터 분석</h2>
-            <div class="gpt-prompt-container">
-                <label for="gptPrompt">분석 프롬프트:</label>
-                <select id="gptPrompt" class="gpt-prompt-select">
-                    <option value="이 데이터에서 주목할만한 트렌드와 패턴을 분석해주세요.">주목할만한 트렌드와 패턴 분석</option>
-                    <option value="이 데이터에서 가장 많이 검색된 키워드 Top 5를 분석해주세요.">검색 키워드 Top 5 분석</option>
-                    <option value="방문자 트래픽이 가장 많은 요일과 시간대는 언제이며, 이를 어떻게 활용할 수 있을까요?">방문자 트래픽 분석 및 활용 방안</option>
-                    <option value="검색엔진별 유입 현황을 분석하고 마케팅 전략을 제안해주세요.">검색엔진별 유입 분석 및 마케팅 전략</option>
-                </select>
-                <input type="text" id="customPrompt" class="gpt-custom-prompt" placeholder="또는 직접 질문을 입력하세요">
+        <div class="pagination-container">
+            <div class="pagination-info">
+                <span id="pageInfo">1-1 / 전체 1</span>
             </div>
-            <button id="analyzeBtn" class="analyze-btn">GPT 분석하기</button>
-            <div class="gpt-loading" id="gptLoading">GPT 분석 중...</div>
-            
-            <div class="gpt-result-container">
-                <h3>분석 결과</h3>
-                <div id="gptResult" class="gpt-result">
-                    <!-- GPT 분석 결과가 여기에 표시됩니다 -->
-                    <p class="placeholder-text">GPT 분석 버튼을 클릭하여 데이터 분석 결과를 확인하세요.</p>
+            <div class="pagination-controls">
+                <button id="firstPageBtn" class="pagination-btn" title="처음 페이지">&lt;&lt;</button>
+                <button id="prevPageBtn" class="pagination-btn" title="이전 페이지">&lt;</button>
+                <button id="nextPageBtn" class="pagination-btn" title="다음 페이지">&gt;</button>
+                <button id="lastPageBtn" class="pagination-btn" title="마지막 페이지">&gt;&gt;</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- GPT 분석 모달 -->
+    <div id="gptModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>GPT 분석 프롬프트 입력</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>분석에 사용할 프롬프트를 입력하세요. 이 프롬프트는 GPT에게 데이터 분석 지시를 내립니다.</p>
+                
+                <div class="gpt-prompt-container">
+                    <label for="gptPrompt">분석 프롬프트:</label>
+                    <select id="gptPrompt" class="gpt-prompt-select">
+                        <option value="이 데이터에서 주목할만한 트렌드와 패턴을 분석해주세요.">주목할만한 트렌드와 패턴 분석</option>
+                        <option value="이 데이터에서 가장 많이 검색된 키워드 Top 5를 분석해주세요.">검색 키워드 Top 5 분석</option>
+                        <option value="방문자 트래픽이 가장 많은 요일과 시간대는 언제이며, 이를 어떻게 활용할 수 있을까요?">방문자 트래픽 분석 및 활용 방안</option>
+                        <option value="검색엔진별 유입 현황을 분석하고 마케팅 전략을 제안해주세요.">검색엔진별 유입 분석 및 마케팅 전략</option>
+                    </select>
+                    <textarea id="customPrompt" class="gpt-custom-prompt" placeholder="또는 직접 질문을 입력하세요"></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button id="cancelAnalysisBtn" class="cancel-btn">취소</button>
+                    <button id="runAnalysisBtn" class="run-btn">분석 요청</button>
+                    <div class="gpt-loading" id="gptLoading">GPT 분석 중...</div>
                 </div>
             </div>
         </div>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html> 

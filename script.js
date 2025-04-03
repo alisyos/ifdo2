@@ -6,15 +6,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingIndicator = document.getElementById('loading');
     const apiUrlInput = document.getElementById('apiUrl');
     
+    // 페이징 관련 요소
+    const pageSizeSelect = document.getElementById('pageSize');
+    const pageInfo = document.getElementById('pageInfo');
+    const firstPageBtn = document.getElementById('firstPageBtn');
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+    const lastPageBtn = document.getElementById('lastPageBtn');
+    
     // GPT 분석 관련 요소
     const analyzeBtn = document.getElementById('analyzeBtn');
     const gptLoading = document.getElementById('gptLoading');
     const gptResult = document.getElementById('gptResult');
     const gptPromptSelect = document.getElementById('gptPrompt');
     const customPromptInput = document.getElementById('customPrompt');
+    const gptResultSection = document.getElementById('gptResultSection');
+    
+    // 모달 관련 요소
+    const gptModal = document.getElementById('gptModal');
+    const closeModalBtn = document.querySelector('.close');
+    const cancelAnalysisBtn = document.getElementById('cancelAnalysisBtn');
+    const runAnalysisBtn = document.getElementById('runAnalysisBtn');
     
     // 현재 데이터 저장 변수
     let currentData = null;
+    
+    // 페이징 관련 변수
+    let currentPage = 1;
+    let pageSize = parseInt(pageSizeSelect.value);
+    let totalItems = 0;
+    let totalPages = 0;
+    let tableDataCache = []; // 전체 데이터를 저장하는 캐시
     
     // 데이터 가져오기 함수
     async function fetchData() {
@@ -78,41 +100,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // 테이블 내용 생성 함수 - IFDO API 응답 구조에 맞게 수정
+    // 테이블 내용 생성 함수 - 페이징 기능 추가
     function populateTable(data) {
         if (!data || !data.data || data.data.length === 0) {
             tableBody.innerHTML = '<tr><td colspan="100%">데이터가 없습니다</td></tr>';
+            updatePaginationInfo(0, 0);
             return;
         }
-        
-        tableBody.innerHTML = '';
         
         // data_table에서 데이터 추출
         const tableData = data.data.find(item => item.data_table);
         
         if (tableData && tableData.data_table && tableData.data_table.length > 0) {
-            // 각 행의 데이터를 테이블에 추가
-            tableData.data_table.forEach(rowData => {
-                const row = document.createElement('tr');
-                
-                // 각 셀의 데이터를 행에 추가
-                Object.keys(rowData).forEach(key => {
-                    const cell = document.createElement('td');
-                    cell.textContent = rowData[key];
-                    row.appendChild(cell);
-                });
-                
-                tableBody.appendChild(row);
-            });
+            // 전체 데이터를 캐시에 저장
+            tableDataCache = tableData.data_table;
+            totalItems = tableDataCache.length;
+            totalPages = Math.ceil(totalItems / pageSize);
+            
+            // 현재 페이지가 총 페이지 수를 초과하지 않도록 조정
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+            
+            displayCurrentPage();
         } else {
             tableBody.innerHTML = '<tr><td colspan="100%">테이블 데이터가 없습니다</td></tr>';
+            updatePaginationInfo(0, 0);
         }
+    }
+    
+    // 현재 페이지 데이터 표시 함수
+    function displayCurrentPage() {
+        tableBody.innerHTML = '';
+        
+        if (tableDataCache.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="100%">데이터가 없습니다</td></tr>';
+            updatePaginationInfo(0, 0);
+            return;
+        }
+        
+        // 현재 페이지에 해당하는 데이터 추출
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, totalItems);
+        const currentPageData = tableDataCache.slice(startIndex, endIndex);
+        
+        // 현재 페이지 데이터 표시
+        currentPageData.forEach(rowData => {
+            const row = document.createElement('tr');
+            
+            // 각 셀의 데이터를 행에 추가
+            Object.keys(rowData).forEach(key => {
+                const cell = document.createElement('td');
+                cell.textContent = rowData[key];
+                row.appendChild(cell);
+            });
+            
+            tableBody.appendChild(row);
+        });
+        
+        // 페이지네이션 정보 업데이트
+        updatePaginationInfo(startIndex + 1, endIndex);
+        updatePaginationButtons();
+    }
+    
+    // 페이지네이션 정보 업데이트 함수
+    function updatePaginationInfo(start, end) {
+        if (totalItems === 0) {
+            pageInfo.textContent = '0-0 / 전체 0';
+        } else {
+            pageInfo.textContent = `${start}-${end} / 전체 ${totalItems}`;
+        }
+    }
+    
+    // 페이지네이션 버튼 상태 업데이트 함수
+    function updatePaginationButtons() {
+        firstPageBtn.disabled = currentPage === 1;
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = currentPage === totalPages;
+        lastPageBtn.disabled = currentPage === totalPages;
     }
     
     // 오류 메시지 표시 함수
     function showErrorMessage(message) {
         tableHead.innerHTML = '<tr><th>오류</th></tr>';
         tableBody.innerHTML = `<tr><td>${message}</td></tr>`;
+        updatePaginationInfo(0, 0);
     }
     
     // 로딩 표시 함수
@@ -124,17 +196,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // GPT 로딩 표시 함수
     function showGptLoading(isLoading) {
         gptLoading.style.display = isLoading ? 'block' : 'none';
-        analyzeBtn.disabled = isLoading;
+        runAnalysisBtn.disabled = isLoading;
+        cancelAnalysisBtn.disabled = isLoading;
+    }
+    
+    // 모달 열기 함수
+    function openModal() {
+        gptModal.style.display = 'block';
+        customPromptInput.value = '';
+        gptPromptSelect.selectedIndex = 0;
+    }
+    
+    // 모달 닫기 함수
+    function closeModal() {
+        gptModal.style.display = 'none';
     }
     
     // GPT 분석 결과 표시 함수
     function displayGptResult(result) {
+        gptResultSection.style.display = 'block';
         gptResult.innerHTML = '';
         
         if (typeof result === 'string') {
             // 줄바꿈을 HTML에서 적용하기 위한 처리
             const formattedResult = result.replace(/\n/g, '<br>');
             gptResult.innerHTML = formattedResult;
+            
+            // 스크롤하여 결과 섹션으로 이동
+            gptResultSection.scrollIntoView({ behavior: 'smooth' });
         } else {
             gptResult.textContent = '분석 결과를 표시할 수 없습니다.';
         }
@@ -144,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function requestGptAnalysis() {
         if (!currentData) {
             alert('분석할 데이터가 없습니다. 먼저 데이터를 불러와주세요.');
+            closeModal();
             return;
         }
         
@@ -186,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             
             if (response.ok && result.status === 'success') {
+                closeModal();
                 displayGptResult(result.result);
             } else {
                 throw new Error(result.message || '분석 요청에 실패했습니다.');
@@ -193,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('GPT 분석 요청 중 오류 발생:', error);
             gptResult.innerHTML = `<p class="error-message">분석 중 오류가 발생했습니다: ${error.message}</p>`;
+            gptResultSection.style.display = 'block';
         } finally {
             showGptLoading(false);
         }
@@ -206,6 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result && result.data) {
                 // 현재 데이터 저장
                 currentData = result;
+                
+                // 페이지 초기화
+                currentPage = 1;
                 
                 // IFDO API 응답 구조에 맞게 처리
                 createTableHeaders(result);
@@ -238,14 +333,66 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // 새로고침 버튼 이벤트 연결
+    // 페이지 이동 함수
+    function goToPage(page) {
+        if (page < 1 || page > totalPages || page === currentPage) {
+            return;
+        }
+        
+        currentPage = page;
+        displayCurrentPage();
+    }
+    
+    // 이벤트 리스너 등록
+    
+    // 페이징 이벤트
+    firstPageBtn.addEventListener('click', () => goToPage(1));
+    prevPageBtn.addEventListener('click', () => goToPage(currentPage - 1));
+    nextPageBtn.addEventListener('click', () => goToPage(currentPage + 1));
+    lastPageBtn.addEventListener('click', () => goToPage(totalPages));
+    
+    // 페이지 크기 변경 이벤트
+    pageSizeSelect.addEventListener('change', () => {
+        pageSize = parseInt(pageSizeSelect.value);
+        totalPages = Math.ceil(totalItems / pageSize);
+        
+        // 현재 페이지가 총 페이지 수를 초과하지 않도록 조정
+        if (currentPage > totalPages) {
+            currentPage = totalPages || 1;
+        }
+        
+        displayCurrentPage();
+    });
+    
+    // 데이터 새로고침 이벤트
     refreshBtn.addEventListener('click', loadAndDisplayData);
     
-    // GPT 분석 버튼 이벤트 연결
-    analyzeBtn.addEventListener('click', requestGptAnalysis);
+    // GPT 분석 버튼 이벤트 (모달 열기)
+    analyzeBtn.addEventListener('click', () => {
+        if (currentData) {
+            openModal();
+        } else {
+            alert('분석할 데이터가 없습니다. 먼저 데이터를 불러와주세요.');
+        }
+    });
+    
+    // 모달 닫기 이벤트
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelAnalysisBtn.addEventListener('click', closeModal);
+    
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener('click', (event) => {
+        if (event.target === gptModal) {
+            closeModal();
+        }
+    });
+    
+    // 분석 실행 버튼 이벤트
+    runAnalysisBtn.addEventListener('click', requestGptAnalysis);
     
     // 초기 상태 설정
     analyzeBtn.disabled = true; // 데이터가 로드되기 전에는 분석 버튼 비활성화
+    updatePaginationButtons(); // 페이지네이션 버튼 초기 상태 설정
     
     // 초기 데이터 로드
     loadAndDisplayData();
