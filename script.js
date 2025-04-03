@@ -394,6 +394,11 @@ document.addEventListener('DOMContentLoaded', () => {
     analyzeBtn.disabled = true; // 데이터가 로드되기 전에는 분석 버튼 비활성화
     updatePaginationButtons(); // 페이지네이션 버튼 초기 상태 설정
     
-    // 초기 데이터 로드
-    loadAndDisplayData();
+    // 초기 테이블 상태 설정
+    tableHead.innerHTML = '<tr><th>안내</th></tr>';
+    tableBody.innerHTML = '<tr><td>데이터 로드 버튼을 클릭하여 데이터를 불러와주세요.</td></tr>';
+    updatePaginationInfo(0, 0);
+    
+    // 이제 페이지 로드 시 자동 데이터 로드를 하지 않습니다.
+    // 사용자가 '데이터 로드' 버튼을 클릭할 때만 데이터를 로드합니다.
 }); 
