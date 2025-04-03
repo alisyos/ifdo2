@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>방문 로그 데이터</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>방문 로그 데이터</h1>
+        
+        <div class="api-input-container">
+            <label for="apiUrl">API URL:</label>
+            <input type="text" id="apiUrl" class="api-input" placeholder="API URL을 입력하세요" value="http://mars.ifdo.co.kr/analytics/JSONAPI.apz?authkey=dTVKc2lRT3BaOGQ3YnZpOUtveld1cjlyTy9jK0NyQUdqalA3WFdDY2dWWT0%3D&m_enc=c1UrTEkzK2FSbHUxY3ZlWnEyczE5N3Z5eWlPQit3RGdVcWszRlBDTWtlbz0%3D">
+        </div>
+        
+        <div class="controls">
+            <button id="refreshBtn">새로고침</button>
+            <div class="loading" id="loading">로딩 중...</div>
+        </div>
+        <div class="table-container">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <!-- 헤더는 데이터를 받은 후 동적으로 생성됩니다 -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 데이터 행은 여기에 동적으로 추가됩니다 -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- GPT 분석 섹션 추가 -->
+        <div class="gpt-analysis-section">
+            <h2>GPT 데이터 분석</h2>
+            <div class="gpt-prompt-container">
+                <label for="gptPrompt">분석 프롬프트:</label>
+                <select id="gptPrompt" class="gpt-prompt-select">
+                    <option value="이 데이터에서 주목할만한 트렌드와 패턴을 분석해주세요.">주목할만한 트렌드와 패턴 분석</option>
+                    <option value="이 데이터에서 가장 많이 검색된 키워드 Top 5를 분석해주세요.">검색 키워드 Top 5 분석</option>
+                    <option value="방문자 트래픽이 가장 많은 요일과 시간대는 언제이며, 이를 어떻게 활용할 수 있을까요?">방문자 트래픽 분석 및 활용 방안</option>
+                    <option value="검색엔진별 유입 현황을 분석하고 마케팅 전략을 제안해주세요.">검색엔진별 유입 분석 및 마케팅 전략</option>
+                </select>
+                <input type="text" id="customPrompt" class="gpt-custom-prompt" placeholder="또는 직접 질문을 입력하세요">
+            </div>
+            <button id="analyzeBtn" class="analyze-btn">GPT 분석하기</button>
+            <div class="gpt-loading" id="gptLoading">GPT 분석 중...</div>
+            
+            <div class="gpt-result-container">
+                <h3>분석 결과</h3>
+                <div id="gptResult" class="gpt-result">
+                    <!-- GPT 분석 결과가 여기에 표시됩니다 -->
+                    <p class="placeholder-text">GPT 분석 버튼을 클릭하여 데이터 분석 결과를 확인하세요.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 

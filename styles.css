@@ -1,0 +1,239 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    color: #2c3e50;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 {
+    margin: 30px 0 20px;
+    font-size: 1.8rem;
+}
+
+h3 {
+    margin: 15px 0;
+    font-size: 1.4rem;
+}
+
+.api-input-container {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.api-input-container label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.api-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+}
+
+.api-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.loading, .gpt-loading {
+    display: none;
+    font-style: italic;
+    color: #7f8c8d;
+}
+
+.table-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #2c3e50;
+    position: sticky;
+    top: 0;
+}
+
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* 데이터 테이블의 짝수 행에 배경색 적용 */
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* 첫 번째 열 스타일 */
+td:first-child, th:first-child {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* 숫자 데이터 정렬 */
+td:nth-child(n+4):nth-child(-n+7) {
+    text-align: right;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+}
+
+/* GPT 분석 관련 스타일 */
+.gpt-analysis-section {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.gpt-prompt-container {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.gpt-prompt-container label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.gpt-prompt-select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    background-color: white;
+}
+
+.gpt-custom-prompt {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.analyze-btn {
+    background-color: #2ecc71;
+    margin-bottom: 20px;
+}
+
+.analyze-btn:hover {
+    background-color: #27ae60;
+}
+
+.gpt-result-container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+}
+
+.gpt-result {
+    min-height: 200px;
+    line-height: 1.8;
+}
+
+.placeholder-text {
+    color: #7f8c8d;
+    font-style: italic;
+    text-align: center;
+    margin-top: 70px;
+}
+
+.gpt-loading {
+    margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+    th, td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .table-container {
+        margin: 0 -10px;
+        border-radius: 0;
+    }
+
+    .gpt-analysis-section {
+        margin: 20px -10px;
+        border-radius: 0;
+    }
+} 
