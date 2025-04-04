@@ -5,23 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>방문 로그 데이터</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
 </head>
 <body>
     <div class="container">
         <h1>방문 로그 데이터</h1>
         
         <div class="api-input-container">
-            <label for="apiUrl">API URL:</label>
+            <label for="apiUrl"><i class="ri-link"></i> API URL:</label>
             <input type="text" id="apiUrl" class="api-input" placeholder="API URL을 입력하세요" value="http://mars.ifdo.co.kr/analytics/JSONAPI.apz?authkey=dTVKc2lRT3BaOGQ3YnZpOUtveld1cjlyTy9jK0NyQUdqalA3WFdDY2dWWT0%3D&m_enc=c1UrTEkzK2FSbHUxY3ZlWnEyczE5N3Z5eWlPQit3RGdVcWszRlBDTWtlbz0%3D">
         </div>
         
         <div class="controls">
-            <button id="refreshBtn">데이터 로드</button>
-            <button id="analyzeBtn" class="analyze-btn">GPT 분석하기</button>
-            <div class="loading" id="loading">로딩 중...</div>
+            <button id="refreshBtn"><i class="ri-download-2-line"></i> 데이터 로드</button>
+            <button id="analyzeBtn" class="analyze-btn"><i class="ri-bubble-chart-line"></i> GPT 분석하기</button>
+            <div class="loading" id="loading"><i class="ri-loader-4-line"></i> 로딩 중...</div>
         </div>
         
-        <!-- GPT 분석 결과 섹션 - 데이터 위쪽으로 이동 -->
+        <!-- GPT 분석 결과 섹션 -->
         <div id="gptResultSection" class="gpt-result-section" style="display: none;">
             <h2>GPT 분석 결과</h2>
             <div class="gpt-result-container">
@@ -59,10 +60,10 @@
                 <span id="pageInfo">1-1 / 전체 1</span>
             </div>
             <div class="pagination-controls">
-                <button id="firstPageBtn" class="pagination-btn" title="처음 페이지">&lt;&lt;</button>
-                <button id="prevPageBtn" class="pagination-btn" title="이전 페이지">&lt;</button>
-                <button id="nextPageBtn" class="pagination-btn" title="다음 페이지">&gt;</button>
-                <button id="lastPageBtn" class="pagination-btn" title="마지막 페이지">&gt;&gt;</button>
+                <button id="firstPageBtn" class="pagination-btn" title="처음 페이지"><i class="ri-skip-back-mini-fill"></i></button>
+                <button id="prevPageBtn" class="pagination-btn" title="이전 페이지"><i class="ri-arrow-left-s-line"></i></button>
+                <button id="nextPageBtn" class="pagination-btn" title="다음 페이지"><i class="ri-arrow-right-s-line"></i></button>
+                <button id="lastPageBtn" class="pagination-btn" title="마지막 페이지"><i class="ri-skip-forward-mini-fill"></i></button>
             </div>
         </div>
     </div>
@@ -71,7 +72,7 @@
     <div id="gptModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>GPT 분석 프롬프트 입력</h2>
+                <h2><i class="ri-bubble-chart-line"></i> GPT 분석 프롬프트 입력</h2>
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
@@ -89,9 +90,9 @@
                 </div>
                 
                 <div class="modal-footer">
-                    <button id="cancelAnalysisBtn" class="cancel-btn">취소</button>
-                    <button id="runAnalysisBtn" class="run-btn">분석 요청</button>
-                    <div class="gpt-loading" id="gptLoading">GPT 분석 중...</div>
+                    <button id="cancelAnalysisBtn" class="cancel-btn"><i class="ri-close-line"></i> 취소</button>
+                    <button id="runAnalysisBtn" class="run-btn"><i class="ri-play-line"></i> 분석 요청</button>
+                    <div class="gpt-loading" id="gptLoading"><i class="ri-loader-4-line"></i> GPT 분석 중...</div>
                 </div>
             </div>
         </div>

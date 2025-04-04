@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const customApiUrl = apiUrlInput.value.trim();
             
             if (!customApiUrl) {
+                showNotification('API URL을 입력해주세요', 'error');
                 throw new Error('API URL을 입력해주세요');
             }
             
@@ -65,13 +66,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(responseData.message || `HTTP 오류! 상태: ${response.status}`);
             }
             
+            showNotification('데이터를 성공적으로 불러왔습니다', 'success');
             return responseData;
         } catch (error) {
             console.error('데이터를 가져오는 중 오류 발생:', error);
+            showNotification(`데이터 로드 실패: ${error.message}`, 'error');
             throw error;
         } finally {
             showLoading(false);
         }
+    }
+    
+    // 알림 표시 함수
+    function showNotification(message, type = 'info') {
+        // 이미 표시된 알림이 있다면 제거
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+        
+        // 알림 요소 생성
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="ri-${type === 'success' ? 'check-line' : type === 'error' ? 'error-warning-line' : 'information-line'}"></i>
+                <span>${message}</span>
+            </div>
+            <button class="notification-close"><i class="ri-close-line"></i></button>
+        `;
+        
+        // body에 알림 추가
+        document.body.appendChild(notification);
+        
+        // 알림 표시 애니메이션
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        // 닫기 버튼 이벤트
+        notification.querySelector('.notification-close').addEventListener('click', () => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        });
+        
+        // 3초 후 자동으로 사라짐
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }
+        }, 3000);
     }
     
     // 테이블 헤더 생성 함수 - IFDO API 응답 구조에 맞게 수정
@@ -191,6 +242,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function showLoading(isLoading) {
         loadingIndicator.style.display = isLoading ? 'block' : 'none';
         refreshBtn.disabled = isLoading;
+        
+        if (isLoading) {
+            refreshBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> 로딩 중...';
+        } else {
+            refreshBtn.innerHTML = '<i class="ri-download-2-line"></i> 데이터 로드';
+        }
     }
     
     // GPT 로딩 표시 함수
@@ -198,6 +255,12 @@ document.addEventListener('DOMContentLoaded', () => {
         gptLoading.style.display = isLoading ? 'block' : 'none';
         runAnalysisBtn.disabled = isLoading;
         cancelAnalysisBtn.disabled = isLoading;
+        
+        if (isLoading) {
+            runAnalysisBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> 분석 중...';
+        } else {
+            runAnalysisBtn.innerHTML = '<i class="ri-play-line"></i> 분석 요청';
+        }
     }
     
     // 모달 열기 함수
@@ -232,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // GPT 분석 요청 함수
     async function requestGptAnalysis() {
         if (!currentData) {
-            alert('분석할 데이터가 없습니다. 먼저 데이터를 불러와주세요.');
+            showNotification('분석할 데이터가 없습니다. 먼저 데이터를 불러와주세요.', 'error');
             closeModal();
             return;
         }
@@ -278,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok && result.status === 'success') {
                 closeModal();
                 displayGptResult(result.result);
+                showNotification('GPT 분석이 완료되었습니다', 'success');
             } else {
                 throw new Error(result.message || '분석 요청에 실패했습니다.');
             }
@@ -285,6 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('GPT 분석 요청 중 오류 발생:', error);
             gptResult.innerHTML = `<p class="error-message">분석 중 오류가 발생했습니다: ${error.message}</p>`;
             gptResultSection.style.display = 'block';
+            showNotification(`분석 요청 실패: ${error.message}`, 'error');
         } finally {
             showGptLoading(false);
         }
@@ -367,12 +432,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // 데이터 새로고침 이벤트
     refreshBtn.addEventListener('click', loadAndDisplayData);
     
+    // Enter 키로 API URL 제출
+    apiUrlInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            loadAndDisplayData();
+        }
+    });
+    
     // GPT 분석 버튼 이벤트 (모달 열기)
     analyzeBtn.addEventListener('click', () => {
         if (currentData) {
             openModal();
         } else {
-            alert('분석할 데이터가 없습니다. 먼저 데이터를 불러와주세요.');
+            showNotification('분석할 데이터가 없습니다. 먼저 데이터를 불러와주세요.', 'error');
         }
     });
     
@@ -387,6 +459,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // 모달 내에서 Enter 키로 분석 요청
+    customPromptInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            requestGptAnalysis();
+        }
+    });
+    
     // 분석 실행 버튼 이벤트
     runAnalysisBtn.addEventListener('click', requestGptAnalysis);
     
@@ -398,7 +477,4 @@ document.addEventListener('DOMContentLoaded', () => {
     tableHead.innerHTML = '<tr><th>안내</th></tr>';
     tableBody.innerHTML = '<tr><td>데이터 로드 버튼을 클릭하여 데이터를 불러와주세요.</td></tr>';
     updatePaginationInfo(0, 0);
-    
-    // 이제 페이지 로드 시 자동 데이터 로드를 하지 않습니다.
-    // 사용자가 '데이터 로드' 버튼을 클릭할 때만 데이터를 로드합니다.
 }); 
