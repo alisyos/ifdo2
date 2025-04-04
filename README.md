@@ -1,57 +1,89 @@
-# IFDO 방문 로그 데이터 뷰어
+# IFDO 리포트 API 분석
 
-IFDO API에서 방문 로그 데이터를 가져와 표 형식으로 보여주는 웹 애플리케이션입니다.
+IFDO 방문 로그 데이터를 시각화하고 GPT를 활용하여 분석하는 웹 애플리케이션입니다.
 
 ## 기능
 
-- API에서 방문 로그 데이터 가져오기
-- 데이터를 표 형식으로 표시
-- 새로고침 버튼으로 최신 데이터 불러오기
-- 반응형 디자인으로 모바일 지원
+- IFDO 방문 로그 데이터 조회 및 표시
+- 데이터 페이지네이션 및 표시 개수 설정
+- GPT를 활용한 데이터 분석 기능
 
-## 설치 및 실행 방법
+## 기술 스택
 
-### 필수 요구사항
+- Frontend: HTML, CSS, JavaScript
+- Backend: Node.js, Express
+- API 통신: Axios
+- 인공지능 분석: OpenAI API (GPT)
 
-- Node.js 14 이상
-- npm 또는 yarn
+## Render.com 배포 가이드
 
-### 설치
+### 1. Render.com 계정 생성
 
-1. 저장소를 클론하거나 다운로드합니다.
-2. 프로젝트 폴더로 이동합니다.
-3. 필요한 패키지를 설치합니다:
+- [Render.com](https://render.com/)에 접속하여 계정을 생성하거나 로그인합니다.
 
+### 2. 새 웹 서비스 생성
+
+1. 대시보드에서 `New +` 버튼을 클릭하고 `Web Service`를 선택합니다.
+2. GitHub 계정과 연결하여 저장소를 선택합니다:
+   - 저장소: `https://github.com/alisyos/ifdo2`
+
+### 3. 서비스 설정
+
+- **Name**: 원하는 서비스 이름 (예: ifdo-api-analyzer)
+- **Region**: 가장 가까운 리전 선택
+- **Branch**: `main`
+- **Runtime**: `Node`
+- **Build Command**: `npm install`
+- **Start Command**: `npm start`
+- **Plan**: Free 또는 필요에 따라 선택
+
+### 4. 환경 변수 설정
+
+'Environment' 섹션에서 다음 환경 변수를 추가합니다:
+
+- `OPENAI_API_KEY`: OpenAI API 키
+- `PORT`: 포트 번호 (기본값: 3000, Render에서는 자동으로 설정됨)
+
+```
+OPENAI_API_KEY=your_openai_api_key
+```
+
+### 5. 배포 진행
+
+- `Create Web Service` 버튼을 클릭하여 배포를 시작합니다.
+- 배포가 완료되면 제공된 URL로 웹사이트에 접속할 수 있습니다.
+
+## 로컬 개발 환경 설정
+
+1. 저장소 클론:
+```bash
+git clone https://github.com/alisyos/ifdo2.git
+cd ifdo2
+```
+
+2. 의존성 설치:
 ```bash
 npm install
 ```
 
-### 실행
-
-개발 모드로 실행:
-
-```bash
-npm run dev
+3. `.env` 파일 생성 및 환경 변수 설정:
+```
+OPENAI_API_KEY=your_openai_api_key
 ```
 
-또는 일반 모드로 실행:
-
+4. 애플리케이션 실행:
 ```bash
 npm start
 ```
 
-서버가 시작되면 브라우저에서 [http://localhost:3000](http://localhost:3000)으로 접속하여 애플리케이션을 사용할 수 있습니다.
+5. 브라우저에서 `http://localhost:3000`으로 접속
 
-## 기술 스택
+## API 키 및 보안
 
-- 프론트엔드: HTML, CSS, JavaScript (순수 바닐라 JS)
-- 백엔드: Node.js, Express
-- API 요청 처리: Axios
+- OpenAI API 키는 `.env` 파일에 저장되며 GitHub에 커밋되지 않습니다.
+- Render.com에서는 환경 변수로 API 키를 안전하게 설정할 수 있습니다.
 
-## 주의사항
+## 참고 사항
 
-이 애플리케이션은 CORS 이슈를 해결하기 위해 로컬 프록시 서버를 사용합니다. 프로덕션 환경에서는 보안을 강화하기 위한 추가 설정이 필요할 수 있습니다.
-
-## 라이센스
-
-이 프로젝트는 MIT 라이센스를 따릅니다. 
+- 웹 애플리케이션이 제대로 작동하려면 유효한 OpenAI API 키가 필요합니다.
+- API 키가 없어도 애플리케이션은 작동하지만, GPT 분석 기능은 모의 응답만 제공합니다. 
